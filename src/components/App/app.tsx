@@ -1,15 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import style from './app.module.scss'
+import style from './app.module.scss';
 
-const App = () => {
-    return <div className={style.root}>
-        <h1>Hello World!!!</h1>
-        <h2>Image tag with relative URL ('/assets/images/...')</h2>
-        <img src="/assets/images/sample.png" alt='' />
-        <h2>Image tag with relative URL ('/assets/icons/...')</h2>
-        <img src="/assets/icons/wifi-icon.svg" alt='' style={{height: "250px"}} />
-    </div>
+interface TestRecord {
+    userId: number;
+    id: number;
+    title: string;
+    completed: boolean;
 }
 
-export default App
+const App = () => {
+    const [testData, setTestData] = useState<TestRecord | null>(null);
+
+    useEffect(() => {
+        fetch('https://peak-flow-app.herokuapp.com/test-endpoint')
+            .then((response) => response.json())
+            .then((json) => setTestData(json));
+    }, []);
+
+    return (
+        <div className={style.root}>
+            <h1>Hello World!!!</h1>
+            {testData ? (
+                <div>
+                    <p>User ID: {testData.userId}</p>
+                    <p>ID: {testData.id}</p>
+                    <p>Title: {testData.title}</p>
+                    <p>Completed: {testData.completed ? 'true' : 'false'}</p>
+                </div>
+            ) : (
+                'Loading...'
+            )}
+        </div>
+    );
+};
+
+export default App;
